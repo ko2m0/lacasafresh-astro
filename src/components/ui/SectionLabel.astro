@@ -1,0 +1,25 @@
+---
+type Props = {
+  text: string;
+  color?: 'green' | 'yellow' | 'white';
+  class?: string;
+};
+const { text, color = 'green', class: className = '' } = Astro.props;
+
+const colors = {
+  green: 'text-green-700 before:bg-green-700',
+  yellow: 'text-yellow before:bg-yellow',
+  white: 'text-white/70 before:bg-white/70',
+};
+---
+
+<div
+  class:list={[
+    'text-label flex items-center gap-3 mb-6',
+    colors[color],
+    className,
+  ]}
+>
+  <span class="inline-block w-8 h-[2px] bg-current"></span>
+  <span>{text}</span>
+</div>

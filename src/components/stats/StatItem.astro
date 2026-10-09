@@ -1,0 +1,17 @@
+---
+type Props = {
+  value: string;
+  label: string;
+  delay?: 0 | 1 | 2 | 3;
+  isLast?: boolean;
+};
+const { value, label, delay = 0, isLast = false } = Astro.props;
+const delayClass = delay > 0 ? `reveal-delay-${delay}` : '';
+---
+
+<div class:list={['reveal', delayClass, !isLast && 'border-r border-black/15 pr-8']}>
+  <div class="display text-5xl md:text-7xl leading-none mb-2">{value}</div>
+  <div class="text-sm uppercase tracking-wider text-black/70 leading-snug">
+    {label}
+  </div>
+</div>

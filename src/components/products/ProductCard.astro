@@ -1,0 +1,37 @@
+---
+import type { Product } from '@/data/products';
+import ProductVisual from './ProductVisual.astro';
+
+type Props = {
+  product: Product;
+  lang: 'en' | 'es';
+  delay?: 0 | 1 | 2 | 3;
+};
+const { product, lang, delay = 0 } = Astro.props;
+const delayClass = delay > 0 ? `reveal-delay-${delay}` : '';
+---
+
+<a
+  href={`/${lang}/products/#${product.slug}`}
+  class:list={[
+    'reveal group relative rounded-xl overflow-hidden cursor-pointer transition-transform duration-400',
+    'aspect-[3/4] flex flex-col justify-end no-underline text-white',
+    delayClass,
+  ]}
+  style={`background: ${product.gradient};`}
+  data-cta="product-view"
+  data-product={product.slug}
+>
+  <ProductVisual product={product} />
+
+  <div class="absolute top-6 right-6 w-10 h-10 rounded-full bg-yellow flex items-center justify-center opacity-0 translate-y-2.5 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 z-20 text-black font-bold">
+    →
+  </div>
+
+  <div class="relative z-10 p-6 bg-gradient-to-t from-black/80 to-transparent">
+    <div class="display text-3xl uppercase mb-1">{product.name[lang]}</div>
+    <div class="text-xs uppercase tracking-[0.15em] text-white/60">
+      {product.origin[lang]}
+    </div>
+  </div>
+</a>

@@ -1,0 +1,74 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import SiteHeader from '@/components/layout/SiteHeader.astro';
+import SiteFooter from '@/components/layout/SiteFooter.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLabel from '@/components/ui/SectionLabel.astro';
+import Reveal from '@/components/ui/Reveal.astro';
+import { contact } from '@/data/contact';
+---
+
+<MainLayout
+  title="Contact · La Casa Fresh"
+  description="Get in touch with La Casa Fresh. Buyer inquiries, grower partnerships, product questions — real people, real answers."
+  lang="en"
+>
+  <SiteHeader lang="en" />
+
+  <main class="pt-40 pb-24 px-6 md:px-8 bg-cream">
+    <Container size="lg">
+      <Reveal>
+        <SectionLabel text="Get In Touch" color="green" />
+      </Reveal>
+      <Reveal delay={1}>
+        <h1 class="display text-display-xl uppercase mb-8">
+          Let's <span class="text-yellow">guac.</span>
+        </h1>
+      </Reveal>
+      <Reveal delay={2}>
+        <p class="text-xl text-gray max-w-2xl leading-relaxed mb-16">
+          Whether you're looking for produce or a partner, we're ready to talk. Real people. Real answers. No runaround.
+        </p>
+      </Reveal>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        <Reveal>
+          <a href={`mailto:${contact.email}`} data-cta="email" class="block p-8 bg-white rounded-xl border border-gray-light hover:border-green-700 transition-colors no-underline text-black">
+            <div class="text-xs uppercase tracking-widest text-green-700 font-bold mb-3">Email</div>
+            <div class="text-lg font-medium">{contact.email}</div>
+          </a>
+        </Reveal>
+        <Reveal delay={1}>
+          <a href={`tel:${contact.phone}`} data-cta="phone" class="block p-8 bg-white rounded-xl border border-gray-light hover:border-green-700 transition-colors no-underline text-black">
+            <div class="text-xs uppercase tracking-widest text-green-700 font-bold mb-3">Phone</div>
+            <div class="text-lg font-medium">{contact.phoneDisplay}</div>
+          </a>
+        </Reveal>
+        <Reveal delay={2}>
+          <a href={`https://wa.me/${contact.whatsapp.replace(/\+/g, '')}`} data-cta="whatsapp" class="block p-8 bg-white rounded-xl border border-gray-light hover:border-green-700 transition-colors no-underline text-black">
+            <div class="text-xs uppercase tracking-widest text-green-700 font-bold mb-3">WhatsApp</div>
+            <div class="text-lg font-medium">Chat with us</div>
+          </a>
+        </Reveal>
+      </div>
+
+      <Reveal delay={3}>
+        <div class="p-10 bg-black text-white rounded-2xl">
+          <div class="text-xs uppercase tracking-widest text-yellow font-bold mb-6">Quick Path</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <a href="/en/importers/" data-cta="buyer-inquiry" class="block p-6 bg-green-700 rounded-xl no-underline text-white hover:-translate-y-1 transition-transform">
+              <div class="display text-2xl uppercase mb-2">I need produce →</div>
+              <div class="text-sm opacity-75">Importers, distributors, retail, foodservice</div>
+            </a>
+            <a href="/en/growers/" data-cta="grower-inquiry" class="block p-6 bg-yellow text-black rounded-xl no-underline hover:-translate-y-1 transition-transform">
+              <div class="display text-2xl uppercase mb-2">I grow produce →</div>
+              <div class="text-sm opacity-75">Growers, packers, exporters</div>
+            </a>
+          </div>
+        </div>
+      </Reveal>
+    </Container>
+  </main>
+
+  <SiteFooter lang="en" />
+</MainLayout>

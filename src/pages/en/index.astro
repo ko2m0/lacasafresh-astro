@@ -1,0 +1,42 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import SiteHeader from '@/components/layout/SiteHeader.astro';
+import SiteFooter from '@/components/layout/SiteFooter.astro';
+import Hero from '@/components/hero/Hero.astro';
+import ProductMarquee from '@/components/marquee/ProductMarquee.astro';
+import BridgeSection from '@/components/editorial/BridgeSection.astro';
+import ProductGrid from '@/components/products/ProductGrid.astro';
+import StatsSection from '@/components/stats/StatsSection.astro';
+import CommercialPaths from '@/components/commercial/CommercialPaths.astro';
+import NetworkSection from '@/components/network/NetworkSection.astro';
+import StorySection from '@/components/editorial/StorySection.astro';
+import ContactCTA from '@/components/contact/ContactCTA.astro';
+
+import { content } from '@/content/en';
+import { products } from '@/data/products';
+import { locations } from '@/data/locations';
+import { statistics } from '@/data/statistics';
+import { commercialPaths } from '@/data/commercial';
+---
+
+<MainLayout
+  title="Fresh Produce From The Source"
+  description="La Casa Fresh connects Mexican growers and packing operations with commercial buyers across the United States. Avocados, limes, mangoes, guavas and more."
+  lang="en"
+>
+  <SiteHeader lang="en" />
+
+  <main>
+    <Hero content={content.hero} />
+    <ProductMarquee lang="en" />
+    <BridgeSection content={content.bridge} />
+    <ProductGrid products={products} lang="en" content={content.products} />
+    <StatsSection stats={statistics.en} />
+    <CommercialPaths lang="en" paths={commercialPaths.en} content={content.paths} />
+    <NetworkSection lang="en" locations={locations} content={content.network} />
+    <StorySection content={content.story} />
+    <ContactCTA content={content.cta} />
+  </main>
+
+  <SiteFooter lang="en" />
+</MainLayout>

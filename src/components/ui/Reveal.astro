@@ -1,0 +1,47 @@
+---
+type Props = {
+  delay?: 0 | 1 | 2 | 3 | 4;
+  class?: string;
+};
+const { delay = 0, class: className = '' } = Astro.props;
+const delayStyle = delay > 0 ? `transition-delay: ${delay * 100}ms;` : '';
+---
+
+<div 
+  class:list={['reveal', className]}
+  style={`opacity: 0; transform: translateY(40px); transition: opacity 800ms cubic-bezier(0.2, 0, 0, 1), transform 800ms cubic-bezier(0.2, 0, 0, 1); ${delayStyle}`}
+  data-reveal
+>
+  <slot />
+</div>
+
+<script>
+  function initRevealObserver() {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+            observer.unobserve(el);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px',
+      }
+    );
+
+    document.querySelectorAll('[data-reveal]').forEach((el) => {
+      observer.observe(el);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initRevealObserver);
+  } else {
+    initRevealObserver();
+  }
+</script>

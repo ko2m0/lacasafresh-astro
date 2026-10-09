@@ -1,0 +1,42 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import SiteHeader from '@/components/layout/SiteHeader.astro';
+import SiteFooter from '@/components/layout/SiteFooter.astro';
+import Hero from '@/components/hero/Hero.astro';
+import ProductMarquee from '@/components/marquee/ProductMarquee.astro';
+import BridgeSection from '@/components/editorial/BridgeSection.astro';
+import ProductGrid from '@/components/products/ProductGrid.astro';
+import StatsSection from '@/components/stats/StatsSection.astro';
+import CommercialPaths from '@/components/commercial/CommercialPaths.astro';
+import NetworkSection from '@/components/network/NetworkSection.astro';
+import StorySection from '@/components/editorial/StorySection.astro';
+import ContactCTA from '@/components/contact/ContactCTA.astro';
+
+import { content } from '@/content/es';
+import { products } from '@/data/products';
+import { locations } from '@/data/locations';
+import { statistics } from '@/data/statistics';
+import { commercialPaths } from '@/data/commercial';
+---
+
+<MainLayout
+  title="Producto Fresco Desde El Origen"
+  description="La Casa Fresh conecta a productores y empacadores mexicanos con compradores comerciales en Estados Unidos. Aguacates, limones, mangos, guayabas y más."
+  lang="es"
+>
+  <SiteHeader lang="es" />
+
+  <main>
+    <Hero content={content.hero} />
+    <ProductMarquee lang="es" />
+    <BridgeSection content={content.bridge} />
+    <ProductGrid products={products} lang="es" content={content.products} />
+    <StatsSection stats={statistics.es} />
+    <CommercialPaths lang="es" paths={commercialPaths.es} content={content.paths} />
+    <NetworkSection lang="es" locations={locations} content={content.network} />
+    <StorySection content={content.story} />
+    <ContactCTA content={content.cta} />
+  </main>
+
+  <SiteFooter lang="es" />
+</MainLayout>

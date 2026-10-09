@@ -1,0 +1,35 @@
+---
+// Map dots — positions are percentage-based for responsiveness
+const dots = [
+  { id: 'michoacan', top: '65%', left: '35%', label: 'Michoacán', accent: true },
+  { id: 'veracruz', top: '60%', left: '42%', label: 'Veracruz', accent: false },
+  { id: 'pharr', top: '55%', left: '45%', label: 'Pharr · HQ', accent: true },
+  { id: 'la', top: '45%', left: '15%', label: 'Los Angeles', accent: false },
+  { id: 'chicago', top: '28%', left: '55%', label: 'Chicago', accent: false },
+  { id: 'atlanta', top: '50%', left: '65%', label: 'Atlanta', accent: false },
+  { id: 'ny', top: '30%', left: '75%', label: 'New York', accent: false },
+];
+---
+
+<div class="aspect-square bg-cream rounded-2xl relative overflow-hidden p-8 md:p-12">
+  <!-- SVG route lines -->
+  <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 400" preserveAspectRatio="none">
+    <path d="M 140 260 Q 180 200 220 220 T 300 120" stroke="#4A7729" stroke-width="1" fill="none" stroke-dasharray="4 4" opacity="0.4" />
+    <path d="M 168 240 Q 200 220 220 220 T 300 120" stroke="#FEDD00" stroke-width="1" fill="none" stroke-dasharray="4 4" opacity="0.4" />
+  </svg>
+
+  {dots.map((dot) => (
+    <div
+      class="absolute w-4 h-4 rounded-full border-[3px] border-white"
+      class:list={[
+        dot.accent ? 'bg-yellow shadow-[0_0_0_2px_#FEDD00]' : 'bg-green-700 shadow-[0_0_0_2px_#4A7729]',
+      ]}
+      style={`top: ${dot.top}; left: ${dot.left};`}
+    >
+      <div
+        class="absolute -inset-2 rounded-full border animate-ping-slow"
+        class:list={[dot.accent ? 'border-yellow/30' : 'border-green-700/30']}
+      ></div>
+    </div>
+  ))}
+</div>

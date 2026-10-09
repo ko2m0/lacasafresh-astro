@@ -1,0 +1,63 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import SiteHeader from '@/components/layout/SiteHeader.astro';
+import SiteFooter from '@/components/layout/SiteFooter.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLabel from '@/components/ui/SectionLabel.astro';
+import Reveal from '@/components/ui/Reveal.astro';
+import Button from '@/components/ui/Button.astro';
+import { commercialPaths } from '@/data/commercial';
+---
+
+<MainLayout
+  title="For Growers & Exporters · La Casa Fresh"
+  description="Mexican growers, packers and exporters — partner with La Casa Fresh to access U.S. commercial markets with transparent, long-term relationships."
+  lang="en"
+>
+  <SiteHeader lang="en" />
+
+  <main>
+    <section class="pt-40 pb-24 px-6 md:px-8 bg-black text-white">
+      <Container size="xl">
+        <Reveal>
+          <SectionLabel text={commercialPaths.en.grower.tag} color="yellow" />
+        </Reveal>
+        <Reveal delay={1}>
+          <h1 class="display text-display-xl uppercase mb-8">
+            {commercialPaths.en.grower.title}
+          </h1>
+        </Reveal>
+        <Reveal delay={2}>
+          <p class="text-xl text-white/85 max-w-2xl leading-relaxed mb-12">
+            {commercialPaths.en.grower.description}
+          </p>
+        </Reveal>
+        <Reveal delay={3}>
+          <Button href="/en/contact/?type=grower" variant="primary" dataCta="grower-inquiry" size="lg">
+            Partner With Us →
+          </Button>
+        </Reveal>
+      </Container>
+    </section>
+
+    <section class="py-24 px-6 md:px-8 bg-cream">
+      <Container size="xl">
+        <Reveal>
+          <SectionLabel text="The Partnership" color="green" />
+        </Reveal>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+          {commercialPaths.en.grower.list.map((item, i) => (
+            <Reveal delay={(i + 1) as 1 | 2}>
+              <div class="p-10 bg-white rounded-xl border border-gray-light">
+                <div class="display text-6xl text-green-700 mb-4">0{i + 1}</div>
+                <p class="text-lg leading-relaxed">{item}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </Container>
+    </section>
+  </main>
+
+  <SiteFooter lang="en" />
+</MainLayout>

@@ -1,0 +1,31 @@
+---
+import { products } from '@/data/products';
+
+type Props = {
+  lang: 'en' | 'es';
+};
+const { lang } = Astro.props;
+const names = products.map((p) => p.name[lang]);
+const items = [...names, ...names];
+---
+
+<div class="bg-yellow py-5 overflow-hidden border-y border-black">
+  <div 
+    class="flex w-max"
+    style="animation: marquee 120s linear infinite;"
+  >
+    {items.map((name) => (
+      <div class="display text-2xl uppercase whitespace-nowrap px-8 text-black flex items-center gap-8">
+        {name}
+        <span class="text-green-700 text-sm">●</span>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+</style>

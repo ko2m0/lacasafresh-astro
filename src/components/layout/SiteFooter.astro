@@ -1,0 +1,79 @@
+---
+import { contact } from '@/data/contact';
+import { content as contentEn } from '@/content/en';
+import { content as contentEs } from '@/content/es';
+
+type Props = {
+  lang: 'en' | 'es';
+};
+const { lang } = Astro.props;
+const c = lang === 'en' ? contentEn : contentEs;
+---
+
+<footer class="bg-black text-white py-20 px-6 md:px-8">
+  <div class="max-w-[1600px] mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-16 border-b border-white/10">
+      <div>
+        <div class="display text-4xl mb-4">
+          La Casa<span class="text-yellow"> Fresh</span>
+        </div>
+        <p class="text-sm text-white/60 max-w-xs leading-relaxed">
+          {c.footer.tagline}
+        </p>
+      </div>
+
+      <div>
+        <div class="text-label text-yellow mb-6">{c.footer.navigate}</div>
+        <ul class="space-y-3">
+          <li><a href={`/${lang}/products/`} class="text-white/70 hover:text-white text-sm no-underline">
+            {lang === 'en' ? 'Products' : 'Productos'}
+          </a></li>
+          <li><a href={`/${lang}/#network`} class="text-white/70 hover:text-white text-sm no-underline">
+            {lang === 'en' ? 'Network' : 'Red'}
+          </a></li>
+          <li><a href={`/${lang}/about/`} class="text-white/70 hover:text-white text-sm no-underline">
+            {lang === 'en' ? 'About' : 'Nosotros'}
+          </a></li>
+          <li><a href={`/${lang}/contact/`} class="text-white/70 hover:text-white text-sm no-underline">
+            {lang === 'en' ? 'Contact' : 'Contacto'}
+          </a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="text-label text-yellow mb-6">{c.footer.forBuyers}</div>
+        <ul class="space-y-3">
+          <li><a href={`/${lang}/contact/`} data-cta="buyer-inquiry" class="text-white/70 hover:text-white text-sm no-underline">
+            {lang === 'en' ? 'Request a Quote' : 'Solicitar Cotización'}
+          </a></li>
+          <li><a href={`/${lang}/products/`} class="text-white/70 hover:text-white text-sm no-underline">
+            {lang === 'en' ? 'Product List' : 'Lista de Productos'}
+          </a></li>
+          <li><a href={`/${lang}/importers/`} class="text-white/70 hover:text-white text-sm no-underline">
+            {lang === 'en' ? 'Distribution' : 'Distribución'}
+          </a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="text-label text-yellow mb-6">{c.footer.forGrowers}</div>
+        <ul class="space-y-3">
+          <li><a href={`/${lang}/contact/`} data-cta="grower-inquiry" class="text-white/70 hover:text-white text-sm no-underline">
+            {lang === 'en' ? 'Partner With Us' : 'Seamos Socios'}
+          </a></li>
+          <li><a href={`/${lang}/growers/`} class="text-white/70 hover:text-white text-sm no-underline">
+            {lang === 'en' ? 'Our Network' : 'Nuestra Red'}
+          </a></li>
+          <li><a href={`/${lang}/contact/`} data-cta="contact" class="text-white/70 hover:text-white text-sm no-underline">
+            {lang === 'en' ? 'Get In Touch' : 'Contáctanos'}
+          </a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap justify-between items-center pt-8 text-xs text-white/50 gap-4">
+      <div>{c.footer.rights}</div>
+      <div>{contact.address[lang]}</div>
+    </div>
+  </div>
+</footer>
