@@ -52,5 +52,7 @@ export const content = {
     forBuyers: 'Para Compradores',
     forGrowers: 'Para Productores',
     rights: '© 2026 La Casa Fresh. Todos los derechos reservados.',
+    credit: 'Website made with ♥ and pride by',
+    c8: 'Circuito Ocho',
   },
 };

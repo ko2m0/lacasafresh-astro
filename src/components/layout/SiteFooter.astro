@@ -14,9 +14,15 @@ const c = lang === 'en' ? contentEn : contentEs;
   <div class="max-w-[1600px] mx-auto">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-16 border-b border-white/10">
       <div>
-        <div class="display text-4xl mb-4">
-          La Casa<span class="text-yellow"> Fresh</span>
-        </div>
+        <!-- Logo -->
+    <a
+      href={`/${lang}/`}
+      class="site-header__logo"
+      aria-label="La Casa Fresh — Home"
+    >
+      <img src="/img/LCF_MXUSA_logo.svg" alt="La Casa Fresh" class="w-30 h-30">
+    </a>
+        
         <p class="text-sm text-white/60 max-w-xs leading-relaxed">
           {c.footer.tagline}
         </p>
@@ -71,9 +77,12 @@ const c = lang === 'en' ? contentEn : contentEs;
       </div>
     </div>
 
-    <div class="flex flex-wrap justify-between items-center pt-8 text-xs text-white/50 gap-4">
-      <div>{c.footer.rights}</div>
-      <div>{contact.address[lang]}</div>
+    <div class="flex flex-wrap justify-between items-top pt-8 text-xs text-white/50 gap-4">
+      <div>
+        <div>{c.footer.rights}</div>
+        <div>{c.footer.credit} <a href="https://circuitoocho.com/" target="_blank">{c.footer.c8}</a></div>
+      </div>
+        <div>{contact.address[lang]}</div>
     </div>
   </div>
 </footer>

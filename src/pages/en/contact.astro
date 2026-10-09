@@ -6,6 +6,7 @@ import Container from '@/components/ui/Container.astro';
 import SectionLabel from '@/components/ui/SectionLabel.astro';
 import Reveal from '@/components/ui/Reveal.astro';
 import { contact } from '@/data/contact';
+import LocationMap from '@/components/location/LocationMap.astro';
 ---
 
 <MainLayout
@@ -68,7 +69,17 @@ import { contact } from '@/data/contact';
         </div>
       </Reveal>
     </Container>
-  </main>
+      </main>
+      <LocationMap
+  title="Mi casa, su casa"
+  subtitle="Headquarters & Distribution Hub"
+  address="1200 W Hi Line Rd, Pharr, TX 78577, United States"
+  mapQuery="26.104692695118985, -98.21189889947563"
+  phone="+1 (925) 558-5243"
+  email="info@lacasafreshco.com"
+  hours="Mon–Fri · 8:00 AM – 6:00 PM CST"
+  accent="yellow"
+/>
 
   <SiteFooter lang="en" />
 </MainLayout>
