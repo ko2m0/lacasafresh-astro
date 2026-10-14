@@ -9,6 +9,7 @@ export const navigation = {
   en: [
     { label: 'Products', href: '/en/products/' },
     { label: 'Network', href: '/en/#network' },
+    { label: 'Team', href: '/en/team/' },
     { label: 'About', href: '/en/about/' },
     { label: 'Contact', href: '/en/contact/' },
     {
@@ -21,6 +22,7 @@ export const navigation = {
   es: [
     { label: 'Productos', href: '/es/products/' },
     { label: 'Red', href: '/es/#network' },
+    { label: 'Equipo', href: '/es/team/' },
     { label: 'Nosotros', href: '/es/about/' },
     { label: 'Contacto', href: '/es/contact/' },
     {

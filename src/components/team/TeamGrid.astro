@@ -1,0 +1,98 @@
+---
+import type { TeamMember } from '@/data/team';
+import TeamCard from './TeamCard.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLabel from '@/components/ui/SectionLabel.astro';
+
+type Props = {
+  members: TeamMember[];
+  lang: 'en' | 'es';
+  content: {
+    label: string;
+    title: string[];
+    description: string;
+  };
+};
+
+const { members = [], lang, content } = Astro.props;
+
+// Defensive checks
+if (!members || members.length === 0) {
+  console.warn('TeamGrid: No team members provided');
+}
+
+const featured = members.find((m) => m.featured) || null;
+const rest = members
+  .filter((m) => !m.featured)
+  .sort((a, b) => a.order - b.order);
+---
+
+<section class="team-section">
+  <Container size="xl">
+    <div class="team-section__header">
+      <SectionLabel text={content.label} color="green" />
+      <h2 class="team-section__title">
+        {content.title[0]}<br />
+        <em class="team-section__title-accent">{content.title[1]}</em>
+      </h2>
+      <p class="team-section__description">{content.description}</p>
+    </div>
+
+    {members.length > 0 ? (
+      <div class="team-section__grid">
+        {featured && <TeamCard member={featured} lang={lang} featured={true} />}
+        {rest.map((member) => (
+          <TeamCard member={member} lang={lang} />
+        ))}
+      </div>
+    ) : (
+      <p style="text-align: center; color: var(--color-gray); padding: 3rem;">
+        Team information coming soon.
+      </p>
+    )}
+  </Container>
+</section>
+
+<style>
+  .team-section {
+    padding: clamp(5rem, 10vw, 8rem) 1.5rem;
+    background: var(--color-cream);
+  }
+
+  .team-section__header {
+    max-width: 700px;
+    margin-bottom: 4rem;
+  }
+
+  .team-section__title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    text-transform: uppercase;
+    line-height: 0.95;
+    margin-bottom: 1.5rem;
+  }
+
+  .team-section__title-accent {
+    font-style: normal;
+    color: var(--color-green);
+  }
+
+  .team-section__description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--color-gray);
+    max-width: 550px;
+  }
+
+  .team-section__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .team-section__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

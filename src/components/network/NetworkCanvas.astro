@@ -1,0 +1,668 @@
+---
+type Props = {
+  lang?: 'en' | 'es';
+};
+
+const { lang = (Astro.currentLocale as 'en' | 'es') || 'en' } = Astro.props;
+
+const labels = {
+  en: {
+    michoacan: 'Michoacán',
+    veracruz: 'Veracruz',
+    pharr: 'Pharr, TX',
+    hub: 'Central Hub',
+    california: 'California',
+    houston: 'Houston',
+    chicago: 'Chicago',
+    newyork: 'New York',
+    philadelphia: 'Philadelphia',
+    growers: '500+ Growers',
+    packing: '12 Packing Houses',
+    distribution: 'Coast-to-Coast',
+    stage1: 'Sourcing',
+    stage2: 'Consolidation',
+    stage3: 'Distribution',
+    packingHouse: 'Packing House',
+    coldStorage: 'Cold Storage',
+  },
+  es: {
+    michoacan: 'Michoacán',
+    veracruz: 'Veracruz',
+    pharr: 'Pharr, TX',
+    hub: 'Centro Operativo',
+    california: 'California',
+    houston: 'Houston',
+    chicago: 'Chicago',
+    newyork: 'Nueva York',
+    philadelphia: 'Filadelfia',
+    growers: '500+ Productores',
+    packing: '12 Empacadoras',
+    distribution: 'Costa a Costa',
+    stage1: 'Abasto',
+    stage2: 'Consolidación',
+    stage3: 'Distribución',
+    packingHouse: 'Empacadora',
+    coldStorage: 'Almacén Frigorífico',
+  },
+};
+
+const t = labels[lang] ?? labels.en;
+---
+
+<section class="network-canvas-section">
+  <div class="network-canvas-container">
+    <canvas id="networkCanvas" aria-label="La Casa Fresh supply chain visualization"></canvas>
+    
+    <!-- Overlay labels for accessibility and SEO -->
+    <div class="canvas-overlay">
+      <div class="overlay-label overlay-label--mexico">
+        <div class="overlay-label__stage">{t.stage1}</div>
+        <div class="overlay-label__title">{t.growers}</div>
+        <div class="overlay-label__subtitle">{t.packing}</div>
+      </div>
+      
+      <div class="overlay-label overlay-label--pharr">
+        <div class="overlay-label__stage">{t.stage2}</div>
+        <div class="overlay-label__title">{t.hub}</div>
+      </div>
+      
+      <div class="overlay-label overlay-label--usa">
+        <div class="overlay-label__stage">{t.stage3}</div>
+        <div class="overlay-label__title">{t.distribution}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .network-canvas-section {
+    padding: clamp(5rem, 10vw, 8rem) 1.5rem;
+    background: var(--color-cream);
+  }
+
+  .network-canvas-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  }
+
+  #networkCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .canvas-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .overlay-label {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .overlay-label__stage {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-green);
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .overlay-label__title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+    color: var(--color-black);
+  }
+
+  .overlay-label__subtitle {
+    font-size: 0.85rem;
+    color: var(--color-gray);
+  }
+
+  .overlay-label--mexico {
+    top: 15%;
+    left: 10%;
+  }
+
+  .overlay-label--pharr {
+    top: 45%;
+    left: 45%;
+  }
+
+  .overlay-label--usa {
+    top: 20%;
+    right: 10%;
+  }
+
+  @media (max-width: 768px) {
+    .overlay-label {
+      padding: 0.75rem 1rem;
+    }
+    .overlay-label__title {
+      font-size: 1.1rem;
+    }
+    .overlay-label__subtitle {
+      font-size: 0.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #networkCanvas {
+      /* Static state - no animation */
+    }
+  }
+</style>
+
+<script>
+  class NetworkVisualization {
+    private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D;
+    private width: number = 0;
+    private height: number = 0;
+    private dpr: number = 1;
+    private animationId: number = 0;
+    private time: number = 0;
+    private reducedMotion: boolean = false;
+    
+    // Scale factor
+    private scale: number = 1;
+    
+    // Isometric angle
+    private isoAngle: number = 0.5; // ~30 degrees
+    
+    // Map colors
+    private mapColor: string = '#ffffff';
+    private mapShadow: string = '#d1d5db';
+    private bordercolor: string = '#9ca3af';
+    
+    // Brand colors
+    private green: string = '#4A7729';
+    private yellow: string = '#FEDD00';
+    private black: string = '#0a0a0a';
+    
+    // Locations (normalized 0-1 coordinates)
+    private locations = {
+      michoacan: { x: 0.28, y: 0.68 },
+      veracruz: { x: 0.38, y: 0.62 },
+      pharr: { x: 0.48, y: 0.48 },
+      california: { x: 0.18, y: 0.38 },
+      houston: { x: 0.52, y: 0.45 },
+      chicago: { x: 0.58, y: 0.28 },
+      newyork: { x: 0.78, y: 0.22 },
+      philadelphia: { x: 0.75, y: 0.28 },
+    };
+    
+    // Animation objects
+    private trucks: any[] = [];
+    private vans: any[] = [];
+    private routeProgress: Map<string, number> = new Map();
+
+    constructor(canvas: HTMLCanvasElement) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d')!;
+      this.dpr = window.devicePixelRatio || 1;
+      this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      
+      this.resize();
+      this.initAnimations();
+      this.animate();
+      
+      window.addEventListener('resize', () => this.resize());
+    }
+
+    private resize() {
+      const rect = this.canvas.getBoundingClientRect();
+      this.width = rect.width;
+      this.height = rect.height;
+      
+      this.canvas.width = this.width * this.dpr;
+      this.canvas.height = this.height * this.dpr;
+      
+      this.ctx.scale(this.dpr, this.dpr);
+      this.scale = Math.min(this.width, this.height) / 1000;
+    }
+
+    private initAnimations() {
+      // Initialize route progress
+      this.routeProgress.set('michoacan-pharr', 0);
+      this.routeProgress.set('veracruz-pharr', 0);
+      this.routeProgress.set('pharr-california', 0);
+      this.routeProgress.set('pharr-houston', 0);
+      this.routeProgress.set('pharr-chicago', 0);
+      this.routeProgress.set('pharr-newyork', 0);
+      this.routeProgress.set('pharr-philadelphia', 0);
+    }
+
+    // Isometric projection
+    private toIso(x: number, y: number, z: number = 0): { x: number; y: number } {
+      const isoX = (x - y) * Math.cos(this.isoAngle);
+      const isoY = (x + y) * Math.sin(this.isoAngle) - z;
+      return { x: isoX, y: isoY };
+    }
+
+    // Draw 3D extruded map shape
+    private drawExtrudedShape(
+      points: Array<{ x: number; y: number }>,
+      extrudeHeight: number,
+      fillColor: string,
+      shadowColor: string
+    ) {
+      const ctx = this.ctx;
+      const baseY = this.height * 0.7;
+      
+      // Draw shadow/extrusion
+      ctx.fillStyle = shadowColor;
+      ctx.beginPath();
+      points.forEach((point, i) => {
+        const x = point.x * this.width;
+        const y = baseY + point.y * this.height;
+        if (i === 0) ctx.moveTo(x, y + extrudeHeight);
+        else ctx.lineTo(x, y + extrudeHeight);
+      });
+      ctx.closePath();
+      ctx.fill();
+      
+      // Draw top face
+      ctx.fillStyle = fillColor;
+      ctx.beginPath();
+      points.forEach((point, i) => {
+        const x = point.x * this.width;
+        const y = baseY + point.y * this.height;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.closePath();
+      ctx.fill();
+      
+      // Draw borders
+      ctx.strokeStyle = this.bordercolor;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    private drawMap() {
+      const ctx = this.ctx;
+      
+      // Simplified USA outline (isometric)
+      const usaPoints = [
+        { x: 0.10, y: 0.15 },
+        { x: 0.85, y: 0.10 },
+        { x: 0.90, y: 0.35 },
+        { x: 0.75, y: 0.45 },
+        { x: 0.50, y: 0.50 },
+        { x: 0.45, y: 0.45 },
+        { x: 0.30, y: 0.48 },
+        { x: 0.15, y: 0.40 },
+      ];
+      
+      this.drawExtrudedShape(usaPoints, 20, this.mapColor, this.mapShadow);
+      
+      // Simplified Mexico outline
+      const mexicoPoints = [
+        { x: 0.15, y: 0.40 },
+        { x: 0.30, y: 0.48 },
+        { x: 0.45, y: 0.45 },
+        { x: 0.50, y: 0.50 },
+        { x: 0.48, y: 0.65 },
+        { x: 0.42, y: 0.75 },
+        { x: 0.35, y: 0.80 },
+        { x: 0.25, y: 0.75 },
+        { x: 0.20, y: 0.65 },
+      ];
+      
+      this.drawExtrudedShape(mexicoPoints, 15, this.mapColor, this.mapShadow);
+      
+      // Draw state borders (simplified)
+      ctx.strokeStyle = 'rgba(156, 163, 175, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      
+      // Example: Texas border
+      ctx.beginPath();
+      ctx.moveTo(this.width * 0.45, this.height * 0.45);
+      ctx.lineTo(this.width * 0.50, this.height * 0.50);
+      ctx.lineTo(this.width * 0.48, this.height * 0.65);
+      ctx.stroke();
+      
+      ctx.setLineDash([]);
+    }
+
+    private drawBuilding(
+      x: number,
+      y: number,
+      width: number,
+      height: number,
+      depth: number,
+      color: string,
+      label?: string
+    ) {
+      const ctx = this.ctx;
+      const baseY = this.height * 0.7;
+      const screenX = x * this.width;
+      const screenY = baseY + y * this.height;
+      
+      const w = width * this.scale;
+      const h = height * this.scale;
+      const d = depth * this.scale;
+
+      // Shadow
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillRect(screenX - w/2 + 5, screenY - d + 5, w, d);
+
+      // Top face
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(screenX - w/2, screenY - d);
+      ctx.lineTo(screenX, screenY - d - h * 0.3);
+      ctx.lineTo(screenX + w/2, screenY - d);
+      ctx.lineTo(screenX, screenY - d + h * 0.3);
+      ctx.closePath();
+      ctx.fill();
+
+      // Right face
+      ctx.fillStyle = this.darkenColor(color, 0.7);
+      ctx.beginPath();
+      ctx.moveTo(screenX, screenY - d - h * 0.3);
+      ctx.lineTo(screenX + w/2, screenY - d);
+      ctx.lineTo(screenX + w/2, screenY);
+      ctx.lineTo(screenX, screenY - h * 0.3);
+      ctx.closePath();
+      ctx.fill();
+
+      // Left face
+      ctx.fillStyle = this.darkenColor(color, 0.85);
+      ctx.beginPath();
+      ctx.moveTo(screenX - w/2, screenY - d);
+      ctx.lineTo(screenX, screenY - d + h * 0.3);
+      ctx.lineTo(screenX, screenY - h * 0.3);
+      ctx.lineTo(screenX - w/2, screenY);
+      ctx.closePath();
+      ctx.fill();
+
+      // Label
+      if (label) {
+        ctx.fillStyle = this.black;
+        ctx.font = `bold ${11 * this.scale}px var(--font-display)`;
+        ctx.textAlign = 'center';
+        ctx.fillText(label, screenX, screenY + 20 * this.scale);
+      }
+    }
+
+    private darkenColor(color: string, factor: number): string {
+      const hex = color.replace('#', '');
+      const r = Math.floor(parseInt(hex.substr(0, 2), 16) * factor);
+      const g = Math.floor(parseInt(hex.substr(2, 2), 16) * factor);
+      const b = Math.floor(parseInt(hex.substr(4, 2), 16) * factor);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    private drawBuildings() {
+      // Michoacán packing house (green)
+      this.drawBuilding(
+        this.locations.michoacan.x,
+        this.locations.michoacan.y,
+        35, 25, 20,
+        this.green,
+        'Michoacán'
+      );
+
+      // Veracruz packing house (green)
+      this.drawBuilding(
+        this.locations.veracruz.x,
+        this.locations.veracruz.y,
+        30, 22, 18,
+        this.green,
+        'Veracruz'
+      );
+
+      // Pharr warehouse (yellow, larger)
+      this.drawBuilding(
+        this.locations.pharr.x,
+        this.locations.pharr.y,
+        55, 40, 30,
+        this.yellow,
+        'Pharr, TX'
+      );
+    }
+
+    private drawRoutes() {
+      const ctx = this.ctx;
+      const baseY = this.height * 0.7;
+      
+      ctx.strokeStyle = 'rgba(74, 119, 41, 0.3)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 6]);
+
+      // Mexico to Pharr routes
+      const mexicoRoutes = [
+        { from: 'michoacan', to: 'pharr' },
+        { from: 'veracruz', to: 'pharr' },
+      ];
+
+      mexicoRoutes.forEach(route => {
+        const from = this.locations[route.from as keyof typeof this.locations];
+        const to = this.locations[route.to as keyof typeof this.locations];
+        
+        ctx.beginPath();
+        ctx.moveTo(from.x * this.width, baseY + from.y * this.height);
+        
+        // Curved path
+        const midX = (from.x + to.x) / 2 * this.width;
+        const midY = baseY + ((from.y + to.y) / 2 - 0.05) * this.height;
+        
+        ctx.quadraticCurveTo(midX, midY, to.x * this.width, baseY + to.y * this.height);
+        ctx.stroke();
+      });
+
+      // Pharr to US cities routes
+      const usRoutes = ['california', 'houston', 'chicago', 'newyork', 'philadelphia'];
+      
+      ctx.strokeStyle = 'rgba(254, 221, 0, 0.4)';
+      
+      usRoutes.forEach(city => {
+        const from = this.locations.pharr;
+        const to = this.locations[city as keyof typeof this.locations];
+        
+        ctx.beginPath();
+        ctx.moveTo(from.x * this.width, baseY + from.y * this.height);
+        
+        const midX = (from.x + to.x) / 2 * this.width;
+        const midY = baseY + ((from.y + to.y) / 2 - 0.08) * this.height;
+        
+        ctx.quadraticCurveTo(midX, midY, to.x * this.width, baseY + to.y * this.height);
+        ctx.stroke();
+      });
+
+      ctx.setLineDash([]);
+    }
+
+    private drawVehicle(
+      x: number,
+      y: number,
+      color: string,
+      size: number = 1,
+      type: 'truck' | 'van' = 'truck'
+    ) {
+      const ctx = this.ctx;
+      const s = (type === 'truck' ? 10 : 7) * this.scale * size;
+
+      // Shadow
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+      ctx.fillRect(x - s + 3, y - s * 0.4 + 3, s * 2, s * 0.8);
+
+      if (type === 'truck') {
+        // Truck body
+        ctx.fillStyle = color;
+        ctx.fillRect(x - s, y - s * 0.5, s * 2, s);
+
+        // Cab
+        ctx.fillStyle = this.darkenColor(color, 0.7);
+        ctx.fillRect(x - s * 1.3, y - s * 0.3, s * 0.5, s * 0.6);
+
+        // Wheels
+        ctx.fillStyle = this.black;
+        ctx.beginPath();
+        ctx.arc(x - s * 0.6, y + s * 0.5, s * 0.2, 0, Math.PI * 2);
+        ctx.arc(x + s * 0.6, y + s * 0.5, s * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // Van body
+        ctx.fillStyle = color;
+        ctx.fillRect(x - s * 0.8, y - s * 0.4, s * 1.6, s * 0.8);
+
+        // Windshield
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.fillRect(x + s * 0.3, y - s * 0.3, s * 0.4, s * 0.5);
+
+        // Wheels
+        ctx.fillStyle = this.black;
+        ctx.beginPath();
+        ctx.arc(x - s * 0.5, y + s * 0.4, s * 0.15, 0, Math.PI * 2);
+        ctx.arc(x + s * 0.5, y + s * 0.4, s * 0.15, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    private getPointOnCurve(
+      from: { x: number; y: number },
+      to: { x: number; y: number },
+      t: number
+    ): { x: number; y: number } {
+      const baseY = this.height * 0.7;
+      const x1 = from.x * this.width;
+      const y1 = baseY + from.y * this.height;
+      const x2 = to.x * this.width;
+      const y2 = baseY + to.y * this.height;
+      const midX = (x1 + x2) / 2;
+      const midY = (y1 + y2) / 2 - 30 * this.scale;
+      
+      const x = Math.pow(1 - t, 2) * x1 + 2 * (1 - t) * t * midX + Math.pow(t, 2) * x2;
+      const y = Math.pow(1 - t, 2) * y1 + 2 * (1 - t) * t * midY + Math.pow(t, 2) * y2;
+      
+      return { x, y };
+    }
+
+    private drawVehicles() {
+      const baseY = this.height * 0.7;
+      
+      // Animate trucks from Mexico to Pharr
+      const mexicoRoutes = [
+        { from: 'michoacan', to: 'pharr', color: this.green, key: 'michoacan-pharr' },
+        { from: 'veracruz', to: 'pharr', color: this.green, key: 'veracruz-pharr' },
+      ];
+
+      mexicoRoutes.forEach(route => {
+        let progress = this.routeProgress.get(route.key) || 0;
+        
+        if (!this.reducedMotion) {
+          progress += 0.0008;
+          if (progress > 1) progress = 0;
+          this.routeProgress.set(route.key, progress);
+        }
+
+        const from = this.locations[route.from as keyof typeof this.locations];
+        const to = this.locations[route.to as keyof typeof this.locations];
+        const pos = this.getPointOnCurve(from, to, progress);
+        
+        this.drawVehicle(pos.x, pos.y, route.color, 1.2, 'truck');
+      });
+
+      // Animate vans from Pharr to US cities
+      const usRoutes = [
+        { to: 'california', key: 'pharr-california' },
+        { to: 'houston', key: 'pharr-houston' },
+        { to: 'chicago', key: 'pharr-chicago' },
+        { to: 'newyork', key: 'pharr-newyork' },
+        { to: 'philadelphia', key: 'pharr-philadelphia' },
+      ];
+
+      usRoutes.forEach((route, i) => {
+        let progress = this.routeProgress.get(route.key) || (i * 0.2);
+        
+        if (!this.reducedMotion) {
+          progress += 0.001;
+          if (progress > 1) progress = 0;
+          this.routeProgress.set(route.key, progress);
+        }
+
+        const from = this.locations.pharr;
+        const to = this.locations[route.to as keyof typeof this.locations];
+        const pos = this.getPointOnCurve(from, to, progress);
+        
+        this.drawVehicle(pos.x, pos.y, this.yellow, 0.8, 'van');
+      });
+    }
+
+    private drawCityMarkers() {
+      const ctx = this.ctx;
+      const baseY = this.height * 0.7;
+      
+      const usCities = ['california', 'houston', 'chicago', 'newyork', 'philadelphia'];
+      
+      usCities.forEach(city => {
+        const loc = this.locations[city as keyof typeof this.locations];
+        const x = loc.x * this.width;
+        const y = baseY + loc.y * this.height;
+        
+        // Marker dot
+        ctx.fillStyle = this.yellow;
+        ctx.beginPath();
+        ctx.arc(x, y, 5 * this.scale, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Pulse ring
+        ctx.strokeStyle = 'rgba(254, 221, 0, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(x, y, (8 + Math.sin(this.time * 2) * 2) * this.scale, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+    }
+
+    private animate() {
+      this.time += 0.016;
+
+      // Clear canvas
+      this.ctx.clearRect(0, 0, this.width, this.height);
+
+      // Draw layers in order
+      this.drawMap();
+      this.drawRoutes();
+      this.drawBuildings();
+      this.drawCityMarkers();
+      this.drawVehicles();
+
+      this.animationId = requestAnimationFrame(() => this.animate());
+    }
+
+    public destroy() {
+      cancelAnimationFrame(this.animationId);
+    }
+  }
+
+  // Initialize
+  const canvas = document.getElementById('networkCanvas') as HTMLCanvasElement;
+  if (canvas) {
+    const viz = new NetworkVisualization(canvas);
+    
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => viz.destroy());
+  }
+</script>

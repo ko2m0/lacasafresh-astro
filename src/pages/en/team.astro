@@ -1,0 +1,94 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import SiteHeader from '@/components/layout/SiteHeader.astro';
+import SiteFooter from '@/components/layout/SiteFooter.astro';
+import TeamGrid from '@/components/team/TeamGrid.astro';
+import LocationMap from '@/components/location/LocationMap.astro';
+import { content } from '@/content/en';
+import { teamMembers } from '@/data/team';
+import { contact } from '@/data/contact';
+---
+
+<MainLayout
+  title="Meet the Team · La Casa Fresh"
+  description="Meet the people behind La Casa Fresh — the sales team, grower relations, and leadership connecting Mexican produce with North American markets."
+  lang="en"
+>
+  <SiteHeader lang="en" />
+
+  <main>
+    <section class="team-hero">
+      <div class="team-hero__inner">
+        <div class="team-hero__label">The People</div>
+        <h1 class="team-hero__title">
+          Not a <span class="team-hero__accent">company.</span><br />
+          A family.
+        </h1>
+        <p class="team-hero__description">
+          La Casa Fresh runs on relationships. Meet the humans who answer the phone, close the deals, and keep product moving from Michoacán to Manhattan.
+        </p>
+      </div>
+    </section>
+
+    <TeamGrid members={teamMembers} lang="en" content={content.team} />
+
+    <LocationMap
+  title="Mi casa, su casa"
+  subtitle="Headquarters & Distribution Hub"
+  address="1200 W Hi Line Rd, Pharr, TX 78577, United States"
+  mapQuery="26.104692695118985, -98.21189889947563"
+  phone="+1 (925) 558-5243"
+  email="info@lacasafreshco.com"
+  hours="Mon–Fri · 8:00 AM – 6:00 PM CST"
+  accent="yellow"
+    />
+  </main>
+
+  <SiteFooter lang="en" />
+</MainLayout>
+
+<style>
+  .team-hero {
+    padding: 10rem 1.5rem 5rem;
+    background: var(--color-black);
+    color: var(--color-white);
+  }
+  .team-hero__inner {
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  .team-hero__label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-yellow);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .team-hero__label::before {
+    content: '';
+    width: 30px;
+    height: 2px;
+    background: var(--color-yellow);
+  }
+  .team-hero__title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 7rem);
+    text-transform: uppercase;
+    line-height: 0.95;
+    margin-bottom: 2rem;
+    max-width: 900px;
+  }
+  .team-hero__accent {
+    color: var(--color-yellow);
+  }
+  .team-hero__description {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.75);
+    max-width: 600px;
+  }
+</style>

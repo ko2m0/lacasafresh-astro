@@ -55,4 +55,10 @@ export const content = {
     credit: 'Website made with ♥ and pride by',
     c8: 'Circuito Ocho',
   },
+  team: {
+  label: 'El Equipo',
+  title: ['Personas reales.', 'Relaciones reales.'],
+  description:
+    'Detrás de cada envío, cada llamada, cada trato — hay una persona. Conoce al equipo que mueve La Casa Fresh.',
+},
 };

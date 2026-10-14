@@ -2,7 +2,7 @@
 import Container from '@/components/ui/Container.astro';
 import SectionLabel from '@/components/ui/SectionLabel.astro';
 import Reveal from '@/components/ui/Reveal.astro';
-import NetworkMap from './NetworkMap.astro';
+import NetworkCanvas from './NetworkCanvas.astro';
 import type { Location } from '@/data/locations';
 
 type Props = {
@@ -46,7 +46,7 @@ const { lang, locations, content: c } = Astro.props;
         </Reveal>
       </div>
       <Reveal delay={2}>
-        <NetworkMap />
+        <NetworkCanvas lang={lang}/>
       </Reveal>
     </div>
   </Container>

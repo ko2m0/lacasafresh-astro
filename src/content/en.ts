@@ -55,4 +55,11 @@ export const content = {
     credit: 'Website made with ♥ and pride by',
     c8: 'Circuito Ocho',
   },
+  
+  team: {
+  label: 'The Team',
+  title: ['Real people.', 'Real relationships.'],
+  description:
+    'Behind every shipment, every call, every deal — there\'s a person. Meet the team that moves La Casa Fresh.',
+},
 };
