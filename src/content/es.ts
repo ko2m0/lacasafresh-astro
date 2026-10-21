@@ -16,6 +16,7 @@ export const content = {
       'De Michoacán a McAllen. De Jalisco a Jersey. Nosotros nos encargamos de lo que está en medio para que tú te enfoques en lo que importa — tu negocio.',
     ],
     stat: { value: '20+', label: 'Años en el negocio del producto fresco' },
+     image: '/images/bridge/crop.png',
   },
   products: {
     label: 'Lo Que Movemos',

@@ -42,7 +42,7 @@ const { products, lang, content: c } = Astro.props;
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {products.map((product, i) => (
+      {products.filter(p => p.published).map((product, i) => (
         <ProductCard product={product} lang={lang} delay={(i % 4) as 0 | 1 | 2 | 3} />
       ))}
     </div>

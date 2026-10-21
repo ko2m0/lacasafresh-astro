@@ -61,7 +61,11 @@ import { commercialPaths } from '@/data/commercial';
       </Container>
     </section>
 
-    <ProductGrid products={products.filter(p => p.featured)} lang="en" content={content.products} />
+    <ProductGrid 
+  products={products.filter(p => p.featured && p.published)} 
+  lang="en" 
+  content={content.products} 
+/>
   </main>
 
   <SiteFooter lang="en" />

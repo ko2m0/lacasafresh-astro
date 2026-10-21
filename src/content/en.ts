@@ -16,6 +16,7 @@ export const content = {
       'From Michoacán to McAllen. From Jalisco to Jersey. We handle what\'s in between so you can focus on what matters — your business.',
     ],
     stat: { value: '20+', label: 'Years in the produce game' },
+    image: '/images/bridge/crop.png',
   },
   products: {
     label: 'What We Move',

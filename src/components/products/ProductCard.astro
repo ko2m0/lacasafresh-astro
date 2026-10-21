@@ -9,29 +9,199 @@ type Props = {
 };
 const { product, lang, delay = 0 } = Astro.props;
 const delayClass = delay > 0 ? `reveal-delay-${delay}` : '';
+
+// Fallback gradient if no image
+const fallbackGradient = product.gradient;
 ---
 
 <a
   href={`/${lang}/products/#${product.slug}`}
   class:list={[
-    'reveal group relative rounded-xl overflow-hidden cursor-pointer transition-transform duration-400',
-    'aspect-[3/4] flex flex-col justify-end no-underline text-white',
+    'product-card',
+    'reveal',
     delayClass,
+    'group',
+    'relative',
+    'rounded-xl',
+    'overflow-hidden',
+    'cursor-pointer',
+    'transition-all',
+    'duration-400',
+    'aspect-[3/4]',
+    'flex',
+    'flex-col',
+    'justify-end',
+    'no-underline',
+    'text-white',
+    !product.image && 'bg-gradient-to-br',
   ]}
-  style={`background: ${product.gradient};`}
+  style={!product.image ? `background: ${product.gradient};` : ''}
   data-cta="product-view"
   data-product={product.slug}
 >
-  <ProductVisual product={product} />
-
-  <div class="absolute top-6 right-6 w-10 h-10 rounded-full bg-yellow flex items-center justify-center opacity-0 translate-y-2.5 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 z-20 text-black font-bold">
-    →
-  </div>
-
-  <div class="relative z-10 p-6 bg-gradient-to-t from-black/80 to-transparent">
-    <div class="display text-3xl uppercase mb-1">{product.name[lang]}</div>
-    <div class="text-xs uppercase tracking-[0.15em] text-white/60">
-      {product.origin[lang]}
+  <!-- Background Image (if exists) -->
+  {product.image && (
+    <div class="product-card__bg">
+      <img
+        src={product.image}
+        alt={product.name[lang]}
+        class="product-card__bg-image"
+        loading="lazy"
+      />
+      <!-- Dark overlay for text readability -->
+      <div class="product-card__overlay"></div>
     </div>
+  )}
+
+  <!-- CSS Shape Fallback (if no image) -->
+  {!product.image && (
+    <ProductVisual product={product} />
+  )}
+
+  <!-- Arrow Icon -->
+  <div class="product-card__arrow">→</div>
+
+  <!-- Content -->
+  <div class="product-card__info">
+    <div class="product-card__name">{product.name[lang]}</div>
+    <div class="product-card__origin">{product.origin[lang]}</div>
+    
+    <!-- Seasonality Badge (if exists) -->
+    {product.seasonality && (
+      <div class="product-card__seasonality">
+        {product.seasonality[lang]}
+      </div>
+    )}
+    
+    <!-- Description (if exists, shown on hover) -->
+    {product.description && (
+      <p class="product-card__description">
+        {product.description[lang]}
+      </p>
+    )}
   </div>
 </a>
+
+<style>
+  /* Background Image Container */
+  .product-card__bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .product-card__bg-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.6s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .group:hover .product-card__bg-image {
+    transform: scale(1.08);
+  }
+
+  /* Dark Overlay for Readability */
+  .product-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0.4) 50%,
+      rgba(0, 0, 0, 0.85) 100%
+    );
+    transition: background 0.4s ease;
+  }
+
+  .group:hover .product-card__overlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.5) 50%,
+      rgba(0, 0, 0, 0.9) 100%
+    );
+  }
+
+  /* Arrow Icon */
+  .product-card__arrow {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-yellow);
+    color: var(--color-black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    z-index: 20;
+  }
+
+  .group:hover .product-card__arrow {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Content Area */
+  .product-card__info {
+    position: relative;
+    z-index: 10;
+    padding: 1.5rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+  }
+
+  .product-card__name {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .product-card__origin {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.5rem;
+  }
+
+  .product-card__seasonality {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(254, 221, 0, 0.2);
+    border: 1px solid var(--color-yellow);
+    border-radius: 100px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-yellow);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .product-card__description {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.85);
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.4s ease;
+  }
+
+  .group:hover .product-card__description {
+    max-height: 100px;
+    opacity: 1;
+    margin-top: 0.5rem;
+  }
+</style>
