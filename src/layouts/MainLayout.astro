@@ -26,6 +26,11 @@ const alternateEs = canonicalUrl.replace('/en/', '/es/');
 
 import { WHATSAPP } from '@/data/whatsapp'; 
 const whatsappUrl = WHATSAPP.getUrl();
+
+import Analytics from "@/components/seo/Analytics.astro";
+import AnalyticsBody from "@/components/seo/AnalyticsBody.astro";
+
+
 ---
 
 <!doctype html>
@@ -76,10 +81,12 @@ const whatsappUrl = WHATSAPP.getUrl();
   />
 
     <!-- GTM integration point (head) -->
+     <Analytics />
     <!-- Slot for GTM head snippet via Astro.env -->
   </head>
   <body>
     <!-- GTM integration point (body) -->
+     <AnalyticsBody />
     <slot />
     <!-- Floating Action Buttons -->
     <div class="fixed bottom-6 right-6 fab-container z-40">
