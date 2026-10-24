@@ -55,6 +55,8 @@ export const content = {
     rights: '© 2026 La Casa Fresh. All rights reserved.',
     credit: 'Website made with ♥ and pride by',
     c8: 'Circuito Ocho',
+    terms: 'Terms & Conditions', 
+    policy: 'Privacy Policy', 
   },
   
   team: {
